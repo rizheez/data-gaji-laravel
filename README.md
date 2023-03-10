@@ -1,3 +1,9 @@
+<h1>Latihan Membuat Aplikasi gaji karyawan</h1>
+<h3>tools</h3>
+<ul>
+    <li>laravel 10 </li>
+    <li>mazer template </li>
+</ul>
 <img src="public/assets/images/app-gaji.png"></img>
 ## License
 
