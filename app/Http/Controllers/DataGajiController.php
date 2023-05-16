@@ -33,55 +33,29 @@ class DataGajiController extends Controller
      */
     public function store(Request $request)
     {
+        $gajiMap = [
+            'direktur' => 15000000,
+            'manager' => 10000000,
+            'supervisor' => 6000000,
+            'staf' => 3500000
+        ];
 
-        $direktur = 15000000;
-        $manager = 10000000;
-        $supervisor = 6000000;
-        $staf = 3500000;
         $denda = 20000;
         $jabatan = $request->input('jabatan');
-        $pinalti = $request->input('telat') * $denda;
+        $telat = $request->input('telat');
+        $pinalti = $telat * $denda;
         $totalGaji = 0;
         $nominalGaji = 0;
 
         $date = $request->input('gajibulan');
-
         $tanggal = Carbon::create($date, 1)->format('Y-m-d');
 
-        if ($jabatan == 'direktur') {
-            $nominalGaji += $direktur;
+        if (isset($gajiMap[$jabatan])) {
+            $nominalGaji += $gajiMap[$jabatan];
             if ($pinalti >= 0) {
-                $total = $direktur - $pinalti;
-                $totalGaji += $total;
+                $totalGaji += $gajiMap[$jabatan] - $pinalti;
             } else {
-                $totalGaji += $direktur;
-            }
-        } else if ($jabatan == 'manager') {
-            $nominalGaji += $manager;
-            if ($pinalti >= 0) {
-                // $totalDenda = $pinalti * $denda;
-                $total = $manager - $pinalti;
-                $totalGaji += $total;
-            } else {
-                $totalGaji += $manager;
-            }
-        } else if ($jabatan == 'supervisor') {
-            $nominalGaji += $supervisor;
-            if ($pinalti >= 0) {
-                // $totalDenda = $pinalti * $denda;
-                $total = $supervisor - $pinalti;
-                $totalGaji += $total;
-            } else {
-                $totalGaji += $supervisor;
-            }
-        } else if ($jabatan == 'staf') {
-            $nominalGaji += $staf;
-            if ($pinalti >= 0) {
-                // $totalDenda = $pinalti * $denda;
-                $total = $staf - $pinalti;
-                $totalGaji += $total;
-            } else {
-                $totalGaji += $staf;
+                $totalGaji += $gajiMap[$jabatan];
             }
         }
 
@@ -90,17 +64,12 @@ class DataGajiController extends Controller
         $gaji->nama = $request->input('nama');
         $gaji->jabatan = $jabatan;
         $gaji->gajibulan = $tanggal;
-        $gaji->telat = $request->input('telat');
+        $gaji->telat = $telat;
         $gaji->nominalgaji = $nominalGaji;
         $gaji->denda = $pinalti;
         $gaji->totalgaji = $totalGaji;
         $gaji->save();
 
-        // set pesan sukses ke session dan redirect ke tampilan data gaji karyawan
         return redirect()->back()->with('success', 'Data gaji berhasil ditambahkan.');
-    }
-
-    public function createPdf()
-    {
     }
 }
